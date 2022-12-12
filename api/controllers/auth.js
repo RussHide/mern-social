@@ -10,7 +10,7 @@ export const register = async (req, res) => {
         console.log(req.body.password)
         const {
             firstName,
-            lastname,
+            lastName,
             email,
             password,
             picturePath,
@@ -24,7 +24,7 @@ export const register = async (req, res) => {
         const passwordHash = await bcrypt.hash(password, salt)
         const newUser = new User({
             firstName,
-            lastname,
+            lastName,
             email,
             password: passwordHash,
             picturePath,

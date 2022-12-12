@@ -10,6 +10,13 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import {register} from "./controllers/auth.js"
 import authRoutes from './routes/auth.js'
+import usersRoutes from './routes/usersRoutes.js'
+import postsRoutes from './routes/postsRoutes.js'
+import { verifyToken } from './middleware/authMiddleware.js';
+import { createPost } from './controllers/postsController.js';
+import User from './models/User.js'
+import PostModel from './models/PostModel.js';
+import {users, posts} from './data/index.js';
 
 
 /* Middleware and packages configuration */
@@ -42,9 +49,12 @@ const upload = multer({storage})
 
 /* Routes with files */
 app.post("/auth/register", upload.single("picture"), register)
+app.post('/posts', verifyToken, upload.single("picture"), createPost)
 
 /* Routes */
 app.use('/auth', authRoutes)
+app.use('/users', usersRoutes)
+app.use('/posts', postsRoutes)
 
 /* Mongoose setup */
 const PORT = process.env.PORT || 6001
@@ -53,4 +63,7 @@ mongoose.connect(process.env.MONGO_URL,{
     useUnifiedTopology: true,
 }).then(() => {
     app.listen(PORT, () => {console.log('Server port:' + PORT)})
+    /* Add data one time */
+   /*  User.insertMany(users)
+    PostModel.insertMany(posts) */
 }).catch((err) => {console.log(err + ' did not connect')})
